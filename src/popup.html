@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 360px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 13px;
+      color: #1d1d1f;
+      background: #fff;
+    }
+    .header {
+      padding: 16px;
+      background: #0a66c2;
+      color: white;
+    }
+    .header h1 { font-size: 15px; font-weight: 600; }
+    .header p { font-size: 11px; opacity: 0.85; margin-top: 4px; }
+
+    .section { padding: 12px 16px; border-bottom: 1px solid #e8e8e8; }
+    .section h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; color: #666; margin-bottom: 8px; }
+
+    .endpoint-list { list-style: none; }
+    .endpoint-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid #f0f0f0;
+    }
+    .endpoint-item:last-child { border-bottom: none; }
+    .endpoint-info { flex: 1; min-width: 0; }
+    .endpoint-name { font-weight: 600; font-size: 13px; }
+    .endpoint-origin { font-size: 11px; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .endpoint-actions { display: flex; gap: 6px; align-items: center; }
+
+    .toggle { position: relative; width: 36px; height: 20px; cursor: pointer; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider {
+      position: absolute; inset: 0; background: #ccc; border-radius: 10px; transition: 0.2s;
+    }
+    .toggle .slider::before {
+      content: ""; position: absolute; width: 16px; height: 16px; left: 2px; bottom: 2px;
+      background: white; border-radius: 50%; transition: 0.2s;
+    }
+    .toggle input:checked + .slider { background: #0a66c2; }
+    .toggle input:checked + .slider::before { transform: translateX(16px); }
+
+    .btn-remove { background: none; border: none; color: #999; cursor: pointer; font-size: 16px; padding: 2px 4px; }
+    .btn-remove:hover { color: #e00; }
+
+    .register-form { display: flex; gap: 8px; }
+    .register-form input {
+      flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;
+    }
+    .register-form input:focus { outline: none; border-color: #0a66c2; }
+
+    .btn {
+      padding: 8px 14px; border: none; border-radius: 6px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .btn-primary { background: #0a66c2; color: white; }
+    .btn-primary:hover { background: #004182; }
+    .btn-primary:disabled { background: #999; cursor: not-allowed; }
+
+    .btn-scrape {
+      width: 100%; padding: 12px; font-size: 14px;
+      background: #057642; color: white; border: none; border-radius: 6px;
+      font-weight: 600; cursor: pointer;
+    }
+    .btn-scrape:hover { background: #045e35; }
+    .btn-scrape:disabled { background: #999; cursor: not-allowed; }
+
+    .status { padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 12px; display: none; }
+    .status.error { display: block; background: #fce4e4; color: #c00; }
+    .status.success { display: block; background: #e4f9e4; color: #070; }
+    .status.info { display: block; background: #e8f0fe; color: #1a73e8; }
+
+    .empty { color: #999; font-style: italic; padding: 8px 0; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>LinkedIn Profile Relay</h1>
+    <p>Scrape profiles and POST to your CRM endpoints</p>
+  </div>
+
+  <div class="section">
+    <h2>Scrape Current Profile</h2>
+    <button id="scrape-btn" class="btn-scrape">Scrape & Relay</button>
+    <div id="scrape-status" class="status"></div>
+  </div>
+
+  <div class="section">
+    <h2>Registered Endpoints</h2>
+    <ul id="endpoint-list" class="endpoint-list">
+      <li class="empty">No endpoints registered</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Add Endpoint</h2>
+    <div class="register-form">
+      <input id="domain-input" type="text" placeholder="crm.example.com">
+      <button id="register-btn" class="btn btn-primary">Add</button>
+    </div>
+    <div id="register-status" class="status"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

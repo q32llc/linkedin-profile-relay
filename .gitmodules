@@ -1,0 +1,3 @@
+[submodule "lib/linkedin-profile-export"]
+	path = lib/linkedin-profile-export
+	url = /home/erik/puzzle/linkedin-profile-export

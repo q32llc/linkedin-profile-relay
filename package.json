@@ -1,0 +1,24 @@
+{
+  "name": "linkedin-profile-relay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension: scrape LinkedIn profiles and POST to registered CRM endpoints",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0",
+    "@types/chrome": "^0.0.268"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "@esbuild/linux-x64"
+    ]
+  }
+}

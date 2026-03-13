@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "name": "Example CRM",
+  "endpoint": "/api/linkedin-import",
+  "icon": "/favicon.png"
+}
