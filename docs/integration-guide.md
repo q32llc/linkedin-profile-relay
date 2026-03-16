@@ -107,3 +107,8 @@ Respond with any 2xx status to confirm receipt.
 The full TypeScript types are available in the
 [linkedin-profile-extractor](https://github.com/earonesty/linkedin-profile-extractor) repository under
 `packages/schema/src/types.ts`.
+
+### 5. Privacy & legal
+
+See the [Privacy Policy](../store/privacy-policy.md) for details on what data the
+extension collects and how it is handled.
