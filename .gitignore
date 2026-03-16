@@ -6,4 +6,3 @@ dist-prod/
 *.zip
 .DS_Store
 tests/.auth/
-store/*.png
