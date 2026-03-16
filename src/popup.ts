@@ -87,8 +87,14 @@ domainInput.addEventListener("keydown", (e) => {
 // --- Scrape & relay ---
 
 scrapeBtn.addEventListener("click", async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id || !tab.url?.includes("linkedin.com/in/")) {
+  // Try active tab first, then fall back to any open LinkedIn profile tab.
+  // Fallback is needed when popup is opened as a tab (e.g. in Playwright tests).
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.url?.includes("linkedin.com/in/")) {
+    const linkedinTabs = await chrome.tabs.query({ url: "https://www.linkedin.com/in/*" });
+    tab = linkedinTabs[0];
+  }
+  if (!tab?.id) {
     showStatus(scrapeStatus, "error", "Navigate to a LinkedIn profile first");
     return;
   }

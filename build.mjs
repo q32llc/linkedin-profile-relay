@@ -1,8 +1,10 @@
 import * as esbuild from "esbuild";
-import { cpSync, mkdirSync, readdirSync } from "fs";
+import { cpSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
 const watch = process.argv.includes("--watch");
+const prod = process.argv.includes("--prod");
+const outdir = prod ? "dist-prod" : "dist";
 
 // Map @liex/* workspace packages to submodule source paths
 const SUBMODULE = "lib/linkedin-profile-export/packages";
@@ -10,31 +12,40 @@ const alias = {};
 for (const dir of readdirSync(SUBMODULE)) {
   const pkgPath = resolve(SUBMODULE, dir, "package.json");
   try {
-    const pkg = JSON.parse((await import("fs")).readFileSync(pkgPath, "utf8"));
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
     alias[pkg.name] = resolve(SUBMODULE, dir, "src/index.ts");
   } catch {}
 }
 
 const shared = {
   bundle: true,
-  sourcemap: true,
+  sourcemap: !prod,
   target: "chrome120",
   format: "esm",
   alias,
+  minify: prod,
 };
 
 const entries = [
-  { entryPoints: ["src/background.ts"], outfile: "dist/background.js" },
-  { entryPoints: ["src/content.ts"], outfile: "dist/content.js" },
-  { entryPoints: ["src/popup.ts"], outfile: "dist/popup.js" },
+  { entryPoints: ["src/background.ts"], outfile: `${outdir}/background.js` },
+  { entryPoints: ["src/content.ts"], outfile: `${outdir}/content.js` },
+  { entryPoints: ["src/popup.ts"], outfile: `${outdir}/popup.js` },
 ];
 
-mkdirSync("dist", { recursive: true });
+mkdirSync(outdir, { recursive: true });
 
-// Copy static assets to dist
-cpSync("manifest.json", "dist/manifest.json");
-cpSync("src/popup.html", "dist/popup.html");
-cpSync("icons", "dist/icons", { recursive: true });
+// Build manifest — strip localhost permissions for prod
+const manifest = JSON.parse(readFileSync("manifest.json", "utf8"));
+if (prod) {
+  manifest.host_permissions = manifest.host_permissions.filter(
+    (p) => !p.includes("localhost")
+  );
+}
+writeFileSync(`${outdir}/manifest.json`, JSON.stringify(manifest, null, 2));
+
+// Copy static assets
+cpSync("src/popup.html", `${outdir}/popup.html`);
+cpSync("icons", `${outdir}/icons`, { recursive: true });
 
 if (watch) {
   for (const entry of entries) {
@@ -46,5 +57,6 @@ if (watch) {
   for (const entry of entries) {
     await esbuild.build({ ...shared, ...entry });
   }
-  console.log("Build complete → dist/");
+  const mode = prod ? "PROD" : "DEV";
+  console.log(`Build complete (${mode}) → ${outdir}/`);
 }
