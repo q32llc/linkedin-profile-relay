@@ -40,6 +40,11 @@ if (prod) {
   manifest.host_permissions = manifest.host_permissions.filter(
     (p) => !p.includes("localhost")
   );
+  if (manifest.externally_connectable?.matches) {
+    manifest.externally_connectable.matches = manifest.externally_connectable.matches.filter(
+      (p) => !p.includes("localhost")
+    );
+  }
 }
 writeFileSync(`${outdir}/manifest.json`, JSON.stringify(manifest, null, 2));
 
