@@ -68,3 +68,9 @@ Required to read the DOM of LinkedIn profile pages for data extraction.
 ### Host permission: */.well-known/linkedin-export.json
 Required to discover and validate CRM endpoint manifests when the user
 registers a new endpoint.
+
+### externally_connectable
+Allows CRM websites to trigger one-click registration by sending a
+message to the extension. The extension validates the site's manifest
+before registering. No data flows from the extension to the website
+through this channel.

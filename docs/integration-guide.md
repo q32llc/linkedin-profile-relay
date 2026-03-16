@@ -23,31 +23,56 @@ Requirements:
 
 ### 2. Add a one-click connect button
 
-Add this snippet to your site. When users click it, the extension registers
-your site automatically:
+Add this snippet to your site. When users click it, the extension
+discovers your `.well-known` manifest and registers your endpoint.
+
+The extension declares `externally_connectable` for all HTTPS origins,
+so any site can trigger registration — no need to be pre-listed.
 
 ```html
 <button id="connect-linkedin-relay">Connect LinkedIn Profile Relay</button>
 
 <script>
-  // The extension ID — users get this when they install
+  // Extension ID from the Chrome Web Store listing
   const EXTENSION_ID = "YOUR_EXTENSION_ID_HERE";
 
-  document.getElementById("connect-linkedin-relay").addEventListener("click", () => {
+  const btn = document.getElementById("connect-linkedin-relay");
+
+  btn.addEventListener("click", () => {
+    if (!chrome?.runtime?.sendMessage) {
+      // Extension not installed — direct user to install it
+      window.open(
+        "https://chromewebstore.google.com/detail/" + EXTENSION_ID,
+        "_blank"
+      );
+      return;
+    }
+
     chrome.runtime.sendMessage(
       EXTENSION_ID,
       { action: "register", origin: window.location.origin },
       (response) => {
+        if (chrome.runtime.lastError) {
+          // Extension not installed or not connectable
+          window.open(
+            "https://chromewebstore.google.com/detail/" + EXTENSION_ID,
+            "_blank"
+          );
+          return;
+        }
         if (response?.success) {
           alert(`Connected! ${response.endpoint.name} will now receive LinkedIn profiles.`);
         } else {
-          alert(`Connection failed: ${response?.error || "Extension not installed?"}`);
+          alert(`Connection failed: ${response?.error}`);
         }
       }
     );
   });
 </script>
 ```
+
+The button gracefully degrades: if the extension isn't installed, it
+redirects to the Chrome Web Store listing instead.
 
 ### 3. Handle incoming POSTs
 
