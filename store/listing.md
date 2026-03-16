@@ -35,7 +35,8 @@ your users can connect in one click.
 - Fully open source
 
 ### For developers
-Integration guide and full payload schema available on GitHub.
+Integration guide and full payload schema available at
+https://github.com/q32llc/linkedin-profile-relay
 
 ## Category
 Productivity
@@ -48,6 +49,10 @@ English
 ### activeTab
 Required to access the LinkedIn profile page the user is currently viewing
 when they click the scrape button. Only activates on user action.
+
+### tabs
+Required to find open LinkedIn profile tabs when the scrape button is
+clicked. Used only to locate the correct tab to extract data from.
 
 ### scripting
 Required to inject the profile extraction script into LinkedIn pages.

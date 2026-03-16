@@ -80,5 +80,5 @@ Respond with any 2xx status to confirm receipt.
 ### 4. Payload schema
 
 The full TypeScript types are available in the
-[linkedin-profile-export](https://github.com/...) repository under
+[linkedin-profile-extractor](https://github.com/earonesty/linkedin-profile-extractor) repository under
 `packages/schema/src/types.ts`.
