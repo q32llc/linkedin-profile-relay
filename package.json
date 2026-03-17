@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:save-login": "node tests/save-login.mjs",
-    "test:e2e": "node tests/e2e.spec.mjs"
+    "test:e2e": "node tests/e2e.spec.mjs",
+    "release": "node scripts/release.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.20.0",

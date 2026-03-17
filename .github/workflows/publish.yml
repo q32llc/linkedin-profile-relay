@@ -1,0 +1,46 @@
+name: Publish to Chrome Web Store
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit & integration tests
+        run: pnpm test
+
+      - name: Build prod
+        run: pnpm build:prod
+
+      - name: Create ZIP
+        run: cd dist-prod && zip -r ../linkedin-profile-relay.zip .
+
+      - name: Upload & publish to Chrome Web Store
+        run: npx chrome-webstore-upload-cli upload --source linkedin-profile-relay.zip --extension-id ${{ secrets.CHROME_EXTENSION_ID }} --auto-publish
+        env:
+          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+
+      - name: Create GitHub Release
+        run: gh release create ${{ github.ref_name }} linkedin-profile-relay.zip --title "${{ github.ref_name }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
