@@ -10,6 +10,7 @@
     "scripting"
   ],
   "host_permissions": [
+    "https://www.linkedin.com/*",
     "http://localhost:*/*"
   ],
   "background": {

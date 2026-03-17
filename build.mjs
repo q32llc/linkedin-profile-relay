@@ -37,9 +37,8 @@ mkdirSync(outdir, { recursive: true });
 // Build manifest — strip localhost permissions for prod
 const manifest = JSON.parse(readFileSync("manifest.json", "utf8"));
 if (prod) {
-  manifest.host_permissions = manifest.host_permissions.filter(
-    (p) => !p.includes("localhost")
-  );
+  // Prod uses activeTab only — strip all host permissions
+  manifest.host_permissions = [];
   if (manifest.externally_connectable?.matches) {
     manifest.externally_connectable.matches = manifest.externally_connectable.matches.filter(
       (p) => !p.includes("localhost")
