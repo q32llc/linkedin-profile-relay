@@ -102,6 +102,14 @@ scrapeBtn.addEventListener("click", async () => {
   scrapeBtn.disabled = true;
   showStatus(scrapeStatus, "info", "Scraping profile...");
 
+  // Inject content script on demand (activeTab grants permission on user gesture)
+  await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    files: ["content.js"],
+  }).catch(() => {
+    // May already be injected — that's fine
+  });
+
   chrome.tabs.sendMessage(tab.id, { type: "SCRAPE_PROFILE" }, (response) => {
     if (chrome.runtime.lastError) {
       showStatus(scrapeStatus, "error", chrome.runtime.lastError.message ?? "Content script not ready");
