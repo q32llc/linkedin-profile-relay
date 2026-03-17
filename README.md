@@ -9,7 +9,7 @@ A Chrome extension that scrapes LinkedIn profiles and POSTs structured data to a
 
 ## For users
 
-1. Install the extension from the [Chrome Web Store](#) <!-- TODO: update with store URL -->
+1. Install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/bidjnglhgpeglbbiphbninnlbmmbmpjb)
 2. Open the extension popup and enter your CRM's domain (e.g. `crm.example.com`)
 3. Navigate to any LinkedIn profile and click **Scrape & Relay**
 4. Done — structured profile data is sent to your registered endpoints
