@@ -14,6 +14,8 @@ explicitly registered and approved.
   skills, and other sections visible on a LinkedIn profile page you navigate to.
 - **Registered endpoints**: The domain names and endpoint URLs of services you
   choose to register with the extension, stored locally in your browser.
+- **Message drafts**: Text included in a vendor-provided draft-message link is
+  held briefly in browser session storage while LinkedIn opens its composer.
 
 ## How data is used
 
@@ -21,6 +23,8 @@ explicitly registered and approved.
   The extension never scrapes automatically or in the background.
 - Extracted data is sent **only to endpoints you have explicitly registered**.
   No data is sent to the extension developer or any third party.
+- Draft-message links only prefill LinkedIn's composer. The extension does not
+  send the message.
 - Registered endpoint information is stored locally in Chrome's extension
   storage and never transmitted anywhere.
 
@@ -39,6 +43,8 @@ explicitly registered and approved.
   extensions.
 - No profile data is stored by the extension. It is extracted, relayed, and
   discarded.
+- A pending message draft is stored by tab for at most 60 seconds while LinkedIn
+  navigates to its composer, then removed after the composer is filled.
 
 ## Permissions
 
@@ -47,7 +53,7 @@ explicitly registered and approved.
 | `storage` | Save your list of registered endpoints |
 | `activeTab` | Access the current tab to extract profile data when you click the button |
 | `scripting` | Inject the extraction script into LinkedIn pages |
-| `host_permissions: linkedin.com` | Read LinkedIn profile page DOM |
+| `host_permissions: linkedin.com` | Read profile pages and prefill requested message drafts |
 | `host_permissions: */.well-known/*` | Discover and validate CRM endpoint manifests |
 
 ## Your choices

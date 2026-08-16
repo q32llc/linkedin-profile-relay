@@ -15,6 +15,8 @@ A Chrome extension that scrapes LinkedIn profiles and POSTs structured data to a
 4. Done — structured profile data is sent to your registered endpoints
 
 You can register multiple endpoints and toggle them on/off from the popup.
+Vendor sites can also provide draft-message links that open a LinkedIn profile,
+open its message composer, and prefill a message for the user to review.
 
 ## For CRM / ATS vendors
 
@@ -34,7 +36,8 @@ Your site becomes a receiver in two steps:
 
 That's it. Users point the extension at your domain, it discovers the manifest, and you start receiving data.
 
-For one-click registration buttons, payload schema, and full details see the **[Integration Guide](docs/integration-guide.md)**.
+For one-click registration buttons, draft-message links, payload schema, and
+full details see the **[Integration Guide](docs/integration-guide.md)**.
 
 ## Security
 
@@ -51,6 +54,7 @@ pnpm build          # dev build → dist/
 pnpm build:prod     # prod build → dist-prod/ (minified, no localhost)
 pnpm test           # unit + integration tests
 pnpm test:e2e       # e2e with Playwright (requires login, see tests/save-login.mjs)
+pnpm test:e2e:compose # real LinkedIn message-draft e2e (also requires login)
 ```
 
 Load `dist/` as an unpacked extension at `chrome://extensions` (developer mode).
