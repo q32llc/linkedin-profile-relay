@@ -35,4 +35,10 @@ export type Message =
   | { type: "SCRAPE_ERROR"; error: string }
   | { type: "REGISTER_ENDPOINT"; origin: string }
   | { type: "REGISTER_RESULT"; success: boolean; error?: string; endpoint?: RegisteredEndpoint }
-  | { type: "RELAY_RESULT"; results: Array<{ origin: string; ok: boolean; status: number }> };
+  | { type: "RELAY_RESULT"; results: Array<{ origin: string; ok: boolean; status: number }> }
+  | { type: "SAVE_PENDING_DRAFT"; message: string; createdAt: number }
+  | { type: "PENDING_DRAFT_SAVED"; success: boolean }
+  | { type: "GET_PENDING_DRAFT" }
+  | { type: "PENDING_DRAFT_RESULT"; draft?: { message: string; createdAt: number } }
+  | { type: "CLEAR_PENDING_DRAFT" }
+  | { type: "PENDING_DRAFT_CLEARED" };

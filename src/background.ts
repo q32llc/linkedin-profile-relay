@@ -7,7 +7,47 @@ import { relayToEndpoints } from "./relay.js";
  * Handle messages from popup and content scripts.
  */
 chrome.runtime.onMessage.addListener(
-  (message: Message, _sender, sendResponse: (response: Message) => void) => {
+  (message: Message, sender, sendResponse: (response: Message) => void) => {
+    if (message.type === "SAVE_PENDING_DRAFT") {
+      const key = pendingDraftKey(sender.tab?.id);
+      if (!key) {
+        sendResponse({ type: "PENDING_DRAFT_SAVED", success: false });
+        return false;
+      }
+
+      chrome.storage.session
+        .set({ [key]: { message: message.message, createdAt: message.createdAt } })
+        .then(() => sendResponse({ type: "PENDING_DRAFT_SAVED", success: true }));
+      return true;
+    }
+
+    if (message.type === "GET_PENDING_DRAFT") {
+      const key = pendingDraftKey(sender.tab?.id);
+      if (!key) {
+        sendResponse({ type: "PENDING_DRAFT_RESULT" });
+        return false;
+      }
+
+      chrome.storage.session.get(key).then((stored) => {
+        const draft = stored[key] as { message: string; createdAt: number } | undefined;
+        sendResponse({ type: "PENDING_DRAFT_RESULT", draft });
+      });
+      return true;
+    }
+
+    if (message.type === "CLEAR_PENDING_DRAFT") {
+      const key = pendingDraftKey(sender.tab?.id);
+      if (!key) {
+        sendResponse({ type: "PENDING_DRAFT_CLEARED" });
+        return false;
+      }
+
+      chrome.storage.session
+        .remove(key)
+        .then(() => sendResponse({ type: "PENDING_DRAFT_CLEARED" }));
+      return true;
+    }
+
     if (message.type === "REGISTER_ENDPOINT") {
       discoverEndpoint(message.origin)
         .then((endpoint) => {
@@ -44,6 +84,10 @@ chrome.runtime.onMessage.addListener(
     return false;
   }
 );
+
+function pendingDraftKey(tabId: number | undefined): string | null {
+  return tabId === undefined ? null : `pending-draft:${tabId}`;
+}
 
 /**
  * Handle one-click registration via custom URL pattern.

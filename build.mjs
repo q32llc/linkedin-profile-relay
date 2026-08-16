@@ -29,6 +29,7 @@ const shared = {
 const entries = [
   { entryPoints: ["src/background.ts"], outfile: `${outdir}/background.js` },
   { entryPoints: ["src/content.ts"], outfile: `${outdir}/content.js` },
+  { entryPoints: ["src/compose.ts"], outfile: `${outdir}/compose.js` },
   { entryPoints: ["src/popup.ts"], outfile: `${outdir}/popup.js` },
 ];
 
@@ -37,8 +38,10 @@ mkdirSync(outdir, { recursive: true });
 // Build manifest — strip localhost permissions for prod
 const manifest = JSON.parse(readFileSync("manifest.json", "utf8"));
 if (prod) {
-  // Prod uses activeTab only — strip all host permissions
-  manifest.host_permissions = [];
+  // Keep LinkedIn access for draft links; localhost is development-only.
+  manifest.host_permissions = manifest.host_permissions.filter(
+    (permission) => !permission.includes("localhost")
+  );
   if (manifest.externally_connectable?.matches) {
     manifest.externally_connectable.matches = manifest.externally_connectable.matches.filter(
       (p) => !p.includes("localhost")

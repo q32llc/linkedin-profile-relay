@@ -74,7 +74,34 @@ so any site can trigger registration — no need to be pre-listed.
 The button gracefully degrades: if the extension isn't installed, it
 redirects to the Chrome Web Store listing instead.
 
-### 3. Handle incoming POSTs
+### 3. Add a draft-message link
+
+To open a person's LinkedIn profile and prefill a message, add the message as
+the `linkedin-profile-relay-message` URL fragment parameter:
+
+```html
+<a href="https://www.linkedin.com/in/jane-smith/#linkedin-profile-relay-message=Hi%20Jane%2C%20I%27d%20like%20to%20connect.">
+  Message Jane on LinkedIn
+</a>
+```
+
+Generate the URL with `URL` and `URLSearchParams` so punctuation, line breaks,
+and non-ASCII characters are encoded correctly:
+
+```js
+function linkedinDraftLink(profileUrl, message) {
+  const url = new URL(profileUrl);
+  url.hash = new URLSearchParams({
+    "linkedin-profile-relay-message": message,
+  });
+  return url.toString();
+}
+```
+
+When the link opens, the extension clicks **Message**, fills the composer, and
+leaves the draft open. It does not send the message.
+
+### 4. Handle incoming POSTs
 
 Your endpoint receives a JSON body matching the `LinkedInExport` schema:
 
@@ -102,13 +129,13 @@ Your endpoint receives a JSON body matching the `LinkedInExport` schema:
 
 Respond with any 2xx status to confirm receipt.
 
-### 4. Payload schema
+### 5. Payload schema
 
 The full TypeScript types are available in the
 [linkedin-profile-extractor](https://github.com/earonesty/linkedin-profile-extractor) repository under
 `packages/schema/src/types.ts`.
 
-### 5. Privacy & legal
+### 6. Privacy & legal
 
 See the [Privacy Policy](../store/privacy-policy.md) for details on what data the
 extension collects and how it is handled.

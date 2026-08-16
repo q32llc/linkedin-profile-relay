@@ -30,6 +30,7 @@ your users can connect in one click.
 - Send to multiple CRMs simultaneously
 - Toggle endpoints on/off without removing them
 - Open standard: any site can become a receiver by serving a manifest
+- Vendor-provided links can open a profile and prefill a message draft
 - HTTPS-only with same-origin validation for security
 - No data sent to third parties — you control every endpoint
 - Fully open source
