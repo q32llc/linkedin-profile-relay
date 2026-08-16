@@ -17,7 +17,13 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out release tooling
+        uses: actions/checkout@v5
+        with:
+          path: release-tooling
+
+      - name: Check out release source
+        uses: actions/checkout@v5
         with:
           ref: ${{ inputs.release_tag || github.ref }}
           submodules: true
@@ -55,7 +61,7 @@ jobs:
           create_credentials_file: false
 
       - name: Upload & publish to Chrome Web Store
-        run: node scripts/publish-chrome-web-store.mjs linkedin-profile-relay.zip
+        run: node release-tooling/scripts/publish-chrome-web-store.mjs linkedin-profile-relay.zip
         env:
           GOOGLE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
           CHROME_PUBLISHER_ID: ${{ vars.CHROME_PUBLISHER_ID }}
