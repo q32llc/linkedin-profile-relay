@@ -13,6 +13,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,19 +43,23 @@ jobs:
       - name: Create ZIP
         run: cd dist-prod && zip -r ../linkedin-profile-relay.zip .
 
+      - name: Authenticate to Google Cloud
+        id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: q32-tools
+          workload_identity_provider: projects/105524363466/locations/global/workloadIdentityPools/github-actions/providers/linkedin-profile-relay
+          service_account: linkedin-relay-publisher@q32-tools.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+          create_credentials_file: false
+
       - name: Upload & publish to Chrome Web Store
-        run: |
-          if [[ -n "$PUBLISHER_ID" ]]; then
-            npx chrome-webstore-upload-cli@4.0.1 upload --source linkedin-profile-relay.zip --extension-id "${{ secrets.CHROME_EXTENSION_ID }}" --auto-publish
-          else
-            # V1 remains supported until October 15, 2026 and does not require a publisher ID.
-            npx chrome-webstore-upload-cli@2.2.2 upload --source linkedin-profile-relay.zip --extension-id "${{ secrets.CHROME_EXTENSION_ID }}" --auto-publish
-          fi
+        run: node scripts/publish-chrome-web-store.mjs linkedin-profile-relay.zip
         env:
-          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          GOOGLE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+          CHROME_PUBLISHER_ID: ${{ vars.CHROME_PUBLISHER_ID }}
+          CHROME_EXTENSION_ID: ${{ vars.CHROME_EXTENSION_ID }}
 
       - name: Create GitHub Release
         run: |
