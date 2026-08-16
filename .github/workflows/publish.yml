@@ -41,7 +41,13 @@ jobs:
         run: cd dist-prod && zip -r ../linkedin-profile-relay.zip .
 
       - name: Upload & publish to Chrome Web Store
-        run: npx chrome-webstore-upload-cli@4.0.1 upload --source linkedin-profile-relay.zip --extension-id ${{ secrets.CHROME_EXTENSION_ID }} --auto-publish
+        run: |
+          if [[ -n "$PUBLISHER_ID" ]]; then
+            npx chrome-webstore-upload-cli@4.0.1 upload --source linkedin-profile-relay.zip --extension-id "${{ secrets.CHROME_EXTENSION_ID }}" --auto-publish
+          else
+            # V1 remains supported until October 15, 2026 and does not require a publisher ID.
+            npx chrome-webstore-upload-cli@2.2.2 upload --source linkedin-profile-relay.zip --extension-id "${{ secrets.CHROME_EXTENSION_ID }}" --auto-publish
+          fi
         env:
           CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
